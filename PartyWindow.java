@@ -16,8 +16,8 @@ import javax.swing.JTextField;
  */
 public class PartyWindow extends JFrame {
 
-    private final JTextField nameField = new JTextField(12);
-    private final JTextField titleField = new JTextField(20);
+    private final JTextField nameField = new JTextField(10);
+    private final JTextField titleField = new JTextField(16);
     private final JButton addButton = new JButton("Add");
     private final JLabel nowPlayingLabel = new JLabel("Nothing playing");
     private final JLabel countdownLabel = new JLabel(" ");
@@ -46,7 +46,7 @@ public class PartyWindow extends JFrame {
         add(new JScrollPane(new JList<String>(upNextModel)),
             BorderLayout.CENTER);
         add(status, BorderLayout.SOUTH);
-        setSize(560, 360);
+        setSize(720, 380);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -93,8 +93,9 @@ public class PartyWindow extends JFrame {
         messageLabel.setText(message);
     }
 
-    /** @param listener called when Add is clicked */
+    /** @param listener called when Add is clicked or Enter is pressed */
     public void addAddListener(ActionListener listener) {
         addButton.addActionListener(listener);
+        titleField.addActionListener(listener);
     }
 }
