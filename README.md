@@ -1,1 +1,149 @@
-# pass-the-aux
+# Pass the Aux
+
+A party song request app. Guests type their name and a song; requests wait in a
+first-in, first-out queue, and every 10 seconds the front song moves to Now Playing
+(10 seconds stands in for a song's length; there is no real audio).
+
+## How to run
+
+All files are in the project root (default package). The tests use the CS 2114
+`student.TestCase` library.
+
+**Model, no view (JUnit tests):** run these as JUnit tests in Eclipse. None of
+them creates a window or a controller.
+
+- `LinkedQueueTest`: the queue (enqueue, dequeue, peek, isEmpty, getSize, clear, contains, toArray, plus stretch enqueueFront and remove)
+- `SongTest`: trimming, bad constructor input, equality ignoring case
+- `RequestValidatorTest`: blank, too long, and symbols-only input
+- `PartyQueueTest`: adding requests, duplicates, the 2-song limit, `tick()`, `playNext()`
+
+**Thin view:** run `PassTheAuxApp` (it has `main`). Type a name and song, click
+Add, and watch the song move from Up Next to Now Playing after 10 seconds.
+
+## Classes
+
+| Role | Class | Responsibility |
+|---|---|---|
+| Model | `LinkedQueue<T>`, `QueueInterface<T>` | Singly linked FIFO queue with head and tail references |
+| Model | `Song` | One request: title and guest name, equal by title ignoring case |
+| Model | `RequestValidator` | Pure text checks on raw input |
+| Model | `RequestResult` | Every outcome of a request |
+| Model | `PartyQueue` | Owns the queue, Now Playing, the countdown, and the party rules |
+| View | `PartyWindow` | Shows Strings and reports the Add click; imports no model class |
+| Controller | `PartyController` | Handles clicks and the 1-second timer, calls the model, updates the view |
+| Controller | `PassTheAuxApp` | `main` only: builds the three and starts the controller |
+
+## Reflection
+
+### What changed from the specification
+
+| Area | Spec said | What we built | Why (what prompted it) |
+|---|---|---|---|
+| `Song` constructor | Only that title and name are trimmed | Also throws `IllegalArgumentException` on null or blank | A second line of defense, so a blank `Song` can't be created even outside `PartyQueue` |
+| `Song.hashCode` | Not mentioned | Added, matching `equals` (title, ignoring case) | Java requires `hashCode` to agree with an overridden `equals` |
+| `PartyQueue.getHistory` | Listed as stretch | Built now | `playNext()` already has to move the old song somewhere, so keeping history cost one line |
+| `LinkedQueue` error messages | Plain messages | First version had stray `[cite: 3]` text in three messages; removed | Leftover from pasting GenAI output; caught during review for this deliverable |
+| Validation | All rules in the model | Same as the spec: text rules in `RequestValidator`, queue rules in `PartyQueue.addRequest`, null and empty-queue exceptions in `LinkedQueue` | No change needed |
+| Tests | Test plan table | Every planned case, plus `SongTest`, `testAddRequestWhilePlaying`, and `testTickClearsNowPlaying` | Reviewing the spec found the edge case where Now Playing clears; the spec's `tick()` return value was corrected to "true if Now Playing changed, including when it clears" |
+| File layout | Not specified | All classes in one folder (default package) | Matches how CS 2114 projects and Web-CAT are set up |
+
+### Did the model really stand alone?
+
+Yes. No model class imports Swing or refers to `PartyWindow` or `PartyController`,
+and all four test classes run without a window. Nothing had to cross the
+model/view line to make it run. The only formatting the view gets is
+`Song.toString()` ("Levitating requested by Tuan"), which the **controller** calls
+and passes on as a plain String, so the view still never sees a `Song`.
+
+### What happened to our scope unknowns
+
+| Unknown from the scope | Status |
+|---|---|
+| How will we test the queue before connecting it to the GUI? | **Figured out.** JUnit tests on `LinkedQueue<String>` and `PartyQueue`, with no view |
+| How do we run a 10-second timer without freezing the screen? | **Figured out.** A `javax.swing.Timer` in `PartyController` fires every second on the Swing thread; tests call `tick()` directly instead of waiting |
+| How do we show the queue without dequeuing? | **Figured out.** `LinkedQueue.toArray()` copies front to back; `PartyQueue.getUpNext()` returns a copy, tested by calling it twice |
+| How do we remove from the middle of a singly linked queue? | **Partly.** `LinkedQueue.remove()` relinks around the node and is tested; `PartyQueue.removeRequest` (the guest-facing part) is still open |
+
+### What doesn't work yet
+
+- `PartyQueue.removeRequest` and `addPriority` are not built (stretch).
+- No JUnit tests for `PartyController` yet; the view and controller have only been checked by hand.
+- A guest can dodge the 2-song limit by typing a different name (known MVP limitation).
+- Guest names have no length limit; only titles are capped at 100 characters.
+
+## Next Steps
+
+### Left to finish the MVP, in order
+
+1. Hand-test the full path in `PassTheAuxApp` as a group: 3 songs play 10 seconds apart, and every bad input shows its message.
+2. Add a name length limit in `RequestValidator.validateRequest` (new `NAME_TOO_LONG` result) and its test.
+3. Add `PartyControllerTest` for `messageFor` (every `RequestResult`, plus null).
+
+### Change feature: host "Play Next" (priority song)
+
+The host can put one song at the **front** of the line, for example a birthday
+song. This adds model logic (front insertion that still respects duplicate and
+validation rules) and a user path through the controller and view.
+
+**Predicted to change:**
+
+- `PartyQueue`: new `RequestResult addPriority(String name, String title)`, which validates with `RequestValidator.validateRequest`, refuses duplicates, then calls `upNext.enqueueFront(song)`
+- `PartyController`: new `handlePriority()`, registered in the constructor
+- `PartyWindow`: new "Play Next" button and `addPriorityListener(ActionListener listener)`
+
+**Predicted NOT to change:** `LinkedQueue` and `QueueInterface` (`enqueueFront` already exists and is tested), `Song`, `RequestValidator`, `RequestResult` (existing results cover every outcome), and `PassTheAuxApp`.
+
+### Stretch goals
+
+- **Committing to:** Play Next (the change feature above) and remove-my-request (`PartyQueue.removeRequest`, which uses the existing `LinkedQueue.remove`).
+- **Already done:** play history (`getHistory`) and duplicate detection.
+- **Dropping:** nothing else from the scope remains.
+
+### New tests needed
+
+- `addPriority`: valid song goes to the front (`getUpNext().get(0)`); blank or symbols-only title is refused; a duplicate is refused; queue unchanged on refusal.
+- `removeRequest`: removes the guest's song and frees a slot (`countSongsBy` drops by 1); missing song returns `NOT_FOUND`; another guest's song cannot be removed.
+- Name length limit: 51+ character name returns `NAME_TOO_LONG`.
+- `PartyController.messageFor`: one message per `RequestResult`, generic message for null.
+
+### Who does what
+
+| Item | Owner |
+|---|---|
+| Group hand test | Everyone |
+| Name length limit + test | Mehad |
+| `PartyControllerTest` | Mehad |
+| `PartyQueue.addPriority`, `removeRequest` + tests | Toshi |
+| Any `LinkedQueue` fixes these need | Tuan |
+| Play Next button, `addPriorityListener` | Ehren |
+| `PartyController.handlePriority` | Mehad |
+
+## Attribution
+
+| File | Team member(s) | How they contributed |
+|---|---|---|
+| `QueueInterface.java` | Tuan | Wrote |
+| `LinkedQueue.java` | Tuan | Wrote; `[cite: 3]` cleanup by Mehad |
+| `LinkedQueueTest.java` | Tuan | Wrote, tested |
+| `Song.java` | Tuan | Wrote |
+| `SongTest.java` | Tuan | Wrote, tested |
+| `RequestResult.java` | Toshi | Wrote |
+| `PartyQueue.java` | Toshi | Wrote |
+| `PartyQueueTest.java` | Toshi, Tuan | Wrote, tested |
+| `RequestValidator.java` | Mehad | GenAI-assisted; reviewed and tested |
+| `RequestValidatorTest.java` | Mehad | GenAI-assisted; reviewed and run |
+| `PartyController.java` | Mehad | GenAI-assisted; reviewed |
+| `PassTheAuxApp.java` | Mehad | GenAI-assisted; reviewed |
+| `PartyWindow.java` | Mehad | GenAI-assisted thin view; reviewed |
+| `README.md` | Mehad | GenAI-assisted; reviewed |
+
+## GenAI note
+
+We used Claude for this deliverable. Mehad asked it to check our repo against the
+Deliverable 3 rubric, then to draft `RequestValidator` and its tests, the thin
+`PartyWindow`, `PartyController`, `PassTheAuxApp`, and this README, following the
+method signatures in our spec. It also found the stray `[cite: 3]` text in
+`LinkedQueue`'s error messages, which came from earlier GenAI output. We kept the
+classes as drafted because they matched our spec signatures, ran all tests, and
+reviewed each file so we can explain it. [Add anything the group changed after
+reviewing, and anything other members used GenAI for.]

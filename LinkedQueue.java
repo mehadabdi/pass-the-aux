@@ -14,7 +14,7 @@ public class LinkedQueue<T> implements QueueInterface<T> {
     @Override
     public void enqueue(T newEntry) {
         if (newEntry == null) {
-            throw new IllegalArgumentException("Cannot enqueue null entry[cite: 3].");
+            throw new IllegalArgumentException("Cannot enqueue null entry.");
         }
         Node<T> newNode = new Node<>(newEntry);
         if (isEmpty()) {
@@ -40,7 +40,7 @@ public class LinkedQueue<T> implements QueueInterface<T> {
     @Override
     public T peek() {
         if (isEmpty()) {
-            throw new NoSuchElementException("Queue is empty[cite: 3].");
+            throw new NoSuchElementException("Queue is empty.");
         }
         return firstNode.data;
     }
@@ -93,7 +93,7 @@ public class LinkedQueue<T> implements QueueInterface<T> {
     // Stretch Methods
     public void enqueueFront(T newEntry) {
         if (newEntry == null) {
-            throw new IllegalArgumentException("Cannot enqueue null entry[cite: 3].");
+            throw new IllegalArgumentException("Cannot enqueue null entry.");
         }
         Node<T> newNode = new Node<>(newEntry, firstNode);
         firstNode = newNode;
