@@ -112,18 +112,18 @@ validation rules) and a user path through the controller and view.
 |---|---|
 | Group hand test | Everyone |
 | Name length limit + test | Mehad |
-| `PartyControllerTest` | Mehad |
+| `PartyControllerTest` | Toshi |
 | `PartyQueue.addPriority`, `removeRequest` + tests | Toshi |
 | Any `LinkedQueue` fixes these need | Tuan |
 | Play Next button, `addPriorityListener` | Ehren |
-| `PartyController.handlePriority` | Mehad |
+| `PartyController.handlePriority` | Tuan |
 
 ## Attribution
 
 | File | Team member(s) | How they contributed |
 |---|---|---|
 | `QueueInterface.java` | Tuan | Wrote |
-| `LinkedQueue.java` | Tuan | Wrote; `[cite: 3]` cleanup by Mehad |
+| `LinkedQueue.java` | Tuan | Wrote; cleanup by Mehad |
 | `LinkedQueueTest.java` | Tuan | Wrote, tested |
 | `Song.java` | Tuan | Wrote |
 | `SongTest.java` | Tuan | Wrote, tested |
@@ -133,17 +133,15 @@ validation rules) and a user path through the controller and view.
 | `RequestValidator.java` | Mehad | GenAI-assisted; reviewed and tested |
 | `RequestValidatorTest.java` | Mehad | GenAI-assisted; reviewed and run |
 | `PartyController.java` | Mehad | GenAI-assisted; reviewed |
-| `PassTheAuxApp.java` | Mehad | GenAI-assisted; reviewed |
-| `PartyWindow.java` | Mehad | GenAI-assisted thin view; reviewed |
+| `PassTheAuxApp.java` | Ehren | GenAI-assisted; reviewed |
+| `PartyWindow.java` | Ehren | GenAI-assisted thin view; reviewed |
 | `README.md` | Mehad | GenAI-assisted; reviewed |
 
 ## GenAI note
 
 We used Claude for this deliverable. Mehad asked it to check our repo against the
-Deliverable 3 rubric, then to draft `RequestValidator` and its tests, the thin
-`PartyWindow`, `PartyController`, `PassTheAuxApp`, and this README, following the
-method signatures in our spec. It also found the stray `[cite: 3]` text in
+Deliverable 3 rubric, then to draft `RequestValidator` and its tests, and this README, following the
+method signatures in our spec. It also found the stray
 `LinkedQueue`'s error messages, which came from earlier GenAI output. We kept the
 classes as drafted because they matched our spec signatures, ran all tests, and
-reviewed each file so we can explain it. [Add anything the group changed after
-reviewing, and anything other members used GenAI for.]
+reviewed each file so we can explain it. 
