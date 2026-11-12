@@ -57,12 +57,22 @@ public class Song {
     }
 
     /**
+     * Returns a hash code consistent with equals (title, ignoring case).
+     *
+     * @return the hash code
+     */
+    @Override
+    public int hashCode() {
+        return title.toLowerCase().hashCode();
+    }
+
+    /**
      * Returns a string representation of the song request.
-     * 
+     *
      * @return formatted string containing title and guest name
      */
     @Override
     public String toString() {
-        return title + " - requested by " + guestName;
+        return title + " requested by " + guestName;
     }
 }
