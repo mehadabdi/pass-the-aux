@@ -8,7 +8,6 @@ import javax.swing.Timer;
  * controller pushes fresh Strings to the view.
  */
 public class PartyController {
-
     private final PartyQueue model;
     private final PartyWindow view;
     private final Timer timer;

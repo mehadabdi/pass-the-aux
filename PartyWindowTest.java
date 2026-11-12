@@ -6,9 +6,6 @@ import student.TestCase;
 
 /**
  * Tests for the PartyWindow class.
- *
- * @author <your name> <your PID>
- * @version <todays date>
  */
 public class PartyWindowTest extends TestCase
 {
