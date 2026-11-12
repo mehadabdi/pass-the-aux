@@ -103,15 +103,15 @@ validation rules) and a user path through the controller and view.
 - Name length limit: 51+ character name returns `NAME_TOO_LONG`.
 - `PartyController.messageFor`: one message per `RequestResult`, generic message for null.
 
-### Who does what
+### Who Does What
 
 | Item | Owner |
 |---|---|
-| Group hand test | Everyone |
+| Group Hand Test | Everyone |
 | Name length limit + test | Mehad |
 | `PartyControllerTest` | Toshi |
 | `PartyQueue.addPriority`, `removeRequest` + tests | Toshi |
-| Any `LinkedQueue` fixes these need | Tuan |
+| Any `LinkedQueue` fixes that these new things need | Tuan |
 | Play Next button, `addPriorityListener` | Ehren |
 | `PartyController.handlePriority` | Tuan |
 
@@ -119,16 +119,16 @@ validation rules) and a user path through the controller and view.
 
 | File | Team member(s) | How they contributed |
 |---|---|---|
-| `QueueInterface.java` | Tuan | Wrote |
-| `LinkedQueue.java` | Tuan | Wrote; cleanup by Mehad |
-| `LinkedQueueTest.java` | Tuan | Wrote, tested |
-| `Song.java` | Tuan | Wrote |
-| `SongTest.java` | Tuan | Wrote, tested |
-| `RequestResult.java` | Toshi | Wrote |
-| `PartyQueue.java` | Toshi | Wrote |
-| `PartyQueueTest.java` | Toshi, Tuan | Wrote, tested |
+| `QueueInterface.java` | Tuan | Created |
+| `LinkedQueue.java` | Tuan | Implemented the interface and the methods required for Pass The Aux; revised by Mehad |
+| `LinkedQueueTest.java` | Tuan | Created the testing class and ensured full coverage |
+| `Song.java` | Tuan | Wrote and modified the appropriate methods |
+| `SongTest.java` | Tuan | Tested the Song class |
+| `RequestResult.java` | Toshi | Toshi wrote and finalized |
+| `PartyQueue.java` | Toshi | Toshi created PartyQueue and finalized it |
+| `PartyQueueTest.java` | Toshi, Tuan | Toshi made the initial tests, Tuan made sure it ran correctly |
 | `RequestValidator.java` | Mehad | GenAI-assisted; reviewed and tested |
-| `RequestValidatorTest.java` | Mehad | GenAI-assisted; reviewed and run |
+| `RequestValidatorTest.java` | Mehad | GenAI-assisted; reviewed and ran without errors |
 | `PartyController.java` | Mehad | GenAI-assisted; reviewed |
 | `PassTheAuxApp.java` | Ehren | GenAI-assisted; reviewed |
 | `PartyWindow.java` | Ehren | GenAI-assisted thin view; reviewed |
@@ -136,9 +136,6 @@ validation rules) and a user path through the controller and view.
 
 ## GenAI note
 
-We used Claude for this deliverable. Mehad asked it to check our repo against the
+We used Claude for this deliverable. Mehad asked it to check our repository against the
 Deliverable 3 rubric, then to draft `RequestValidator` and its tests, and this README, following the
-method signatures in our spec. It also found the stray
-`LinkedQueue`'s error messages, which came from earlier GenAI output. We kept the
-classes as drafted because they matched our spec signatures, ran all tests, and
-reviewed each file so we can explain it. 
+method signatures in our spec. It also found the stray `LinkedQueue`'s error messages, which came from earlier GenAI output. Ehren also asked GenAI to confirm that there are no errors within the code, especially when it comes to creating the GUI and the official main method. We kept our original class designs since they already matched the required specifications, verified everything with our test suite, and reviewed each file to ensure we can clearly explain the implementation.
