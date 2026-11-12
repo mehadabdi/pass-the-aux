@@ -2,19 +2,19 @@
 
 A party song request app where guests can submit their name and a song title. Requests enter a first-in, first-out queue and automatically advance to "Now Playing" every 10 seconds to simulate song playback without using real audio. 
 
-## How to run
+## How To Run
 
-All project files are located in the root directory of this repository. The test suite is built with the CS 2114 student.TestCase library. You can launch the program by running the main method inside "PassTheAuxApp.java"
+All project files are located in the root directory of this repository. The test suite is built with the CS 2114 student.TestCase library. You can launch the program by running the main method inside `PassTheAuxApp.java`
 
 **Model, No View (JUnit tests):** run these as JUnit tests in Eclipse. None of
 them creates a window or a controller.
 
-- `LinkedQueueTest`: the queue (enqueue, dequeue, peek, isEmpty, getSize, clear, contains, toArray, plus stretch enqueueFront and remove)
+- `LinkedQueueTest`: tests the queue methods (enqueue, dequeue, peek, isEmpty, getSize, clear, contains, toArray, plus stretch enqueueFront and remove)
 - `SongTest`: trimming, bad constructor input, equality ignoring case
 - `RequestValidatorTest`: blank, too long, and symbols-only input
 - `PartyQueueTest`: adding requests, duplicates, the 2-song limit, `tick()`, `playNext()`
 
-**Thin view:** run `PassTheAuxApp` (it has `main`). Type a name and song, click
+**Thin view:** run `PassTheAuxApp` (it has `main`). Type a name and song title, click
 Add, and watch the song move from Up Next to Now Playing after 10 seconds.
 
 ## Classes
