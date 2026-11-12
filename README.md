@@ -1,8 +1,6 @@
 # Pass the Aux
 
-A party song request app. Guests type their name and a song; requests wait in a
-first-in, first-out queue, and every 10 seconds the front song moves to Now Playing
-(10 seconds stands in for a song's length; there is no real audio).
+A party song request app where guests can submit their name and a song title. Requests enter a first-in, first-out queue and automatically advance to "Now Playing" every 10 seconds to simulate song playback without using real audio. 
 
 ## How to run
 
