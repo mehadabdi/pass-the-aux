@@ -4,10 +4,9 @@ A party song request app where guests can submit their name and a song title. Re
 
 ## How to run
 
-All files are in the project root (default package). The tests use the CS 2114
-`student.TestCase` library.
+All project files are located in the root directory of this repository. The test suite is built with the CS 2114 student.TestCase library. You can launch the program by running the main method inside "PassTheAuxApp.java"
 
-**Model, no view (JUnit tests):** run these as JUnit tests in Eclipse. None of
+**Model, No View (JUnit tests):** run these as JUnit tests in Eclipse. None of
 them creates a window or a controller.
 
 - `LinkedQueueTest`: the queue (enqueue, dequeue, peek, isEmpty, getSize, clear, contains, toArray, plus stretch enqueueFront and remove)
