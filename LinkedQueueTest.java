@@ -15,7 +15,7 @@ public class LinkedQueueTest extends TestCase {
     /**
      * Tests normal enqueue behavior and size tracking.
      */
-    public void testEnqueueNormal() {
+    public void testEnqueue() {
         queue.enqueue("A");
         queue.enqueue("B");
         assertEquals(2, queue.getSize());
@@ -42,7 +42,7 @@ public class LinkedQueueTest extends TestCase {
     /**
      * Tests normal dequeue behavior.
      */
-    public void testDequeueNormal() {
+    public void testDequeue() {
         queue.enqueue("A");
         queue.enqueue("B");
         assertEquals("A", queue.dequeue());
@@ -67,7 +67,7 @@ public class LinkedQueueTest extends TestCase {
     /**
      * Tests normal peek behavior without altering the queue size.
      */
-    public void testPeekNormal() {
+    public void testPeek() {
         queue.enqueue("A");
         queue.enqueue("B");
         assertEquals("A", queue.peek());
@@ -150,7 +150,7 @@ public class LinkedQueueTest extends TestCase {
     /**
      * Tests the stretch method enqueueFront.
      */
-    public void testEnqueueFrontStretch() {
+    public void testEnqueueFront() {
         queue.enqueue("B");
         queue.enqueueFront("A");
         assertEquals(2, queue.getSize());
@@ -176,7 +176,7 @@ public class LinkedQueueTest extends TestCase {
     /**
      * Tests the stretch method remove.
      */
-    public void testRemoveStretch() {
+    public void testRemove() {
         queue.enqueue("A");
         queue.enqueue("B");
         queue.enqueue("C");
