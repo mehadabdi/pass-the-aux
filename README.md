@@ -1,4 +1,4 @@
-# Pass the Aux
+# Pass The Aux
 
 A party song request app where guests can submit their name and a song title. Requests enter a first-in, first-out queue and automatically advance to "Now Playing" every 10 seconds to simulate song playback without using real audio. 
 
