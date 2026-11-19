@@ -8,6 +8,7 @@ public class PartyQueue {
 
     public static final int SONG_INTERVAL_SECONDS = 10;
     public static final int MAX_SONGS_PER_GUEST = 2;
+    public static final int MAX_HISTORY = 20;
 
     private final LinkedQueue<Song> upNext;
     private Song nowPlaying;
@@ -74,6 +75,9 @@ public class PartyQueue {
     public Song playNext() {
         if (nowPlaying != null) {
             history.add(nowPlaying);
+            if (history.size() > MAX_HISTORY) {
+                history.remove(0);
+            }
         }
         if (upNext.isEmpty()) {
             nowPlaying = null;
@@ -153,7 +157,33 @@ public class PartyQueue {
     }
 
     /**
+     * Removes a guest's own waiting song. Guests may remove only songs
+     * requested under their name (ignoring case and surrounding spaces),
+     * which also frees one of their 2 slots.
+     *
+     * @param name         the guest asking to remove the song
+     * @param upNextIndex  the song's position in getUpNext() (0 = front)
+     * @return true if the song was removed; false if the name is blank or
+     *         null, the index is not in Up Next, or the song belongs to
+     *         another guest (queue unchanged)
+     */
+    public boolean removeRequest(String name, int upNextIndex) {
+        String cleanName = RequestValidator.sanitize(name);
+        ArrayList<Song> waiting = getUpNext();
+        if (cleanName == null || upNextIndex < 0
+            || upNextIndex >= waiting.size()) {
+            return false;
+        }
+        Song song = waiting.get(upNextIndex);
+        if (!song.getGuestName().equalsIgnoreCase(cleanName)) {
+            return false;
+        }
+        return upNext.remove(song);
+    }
+
+    /**
      * Gets a copy of the songs that have already played, oldest first.
+     * Only the last MAX_HISTORY songs are kept.
      *
      * @return a new list of played songs (empty if none)
      */

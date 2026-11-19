@@ -29,6 +29,7 @@ public class PartyController {
         this.timer = new Timer(1000, e -> handleTick());
         view.addAddListener(e -> handleAdd());
         view.addPlayAgainListener(e -> handlePlayAgain());
+        view.addRemoveListener(e -> handleRemove());
         started = false;
     }
 
@@ -78,6 +79,23 @@ public class PartyController {
         }
         if (result == RequestResult.ADDED) {
             view.clearInputs();
+        }
+        refresh();
+    }
+
+    /**
+     * Removes the song the guest picked in Up Next, if it is theirs. The
+     * model decides whether the removal is allowed.
+     */
+    public void handleRemove() {
+        boolean removed = model.removeRequest(view.getNameInput(),
+            view.getSelectedUpNextIndex());
+        if (removed) {
+            view.showMessage("Removed your song.");
+        }
+        else {
+            view.showMessage(
+                "Type your name and pick one of your own songs in Up Next.");
         }
         refresh();
     }

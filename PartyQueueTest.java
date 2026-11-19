@@ -303,4 +303,76 @@ public class PartyQueueTest extends TestCase {
         // Levitating is playing again and is also history[0]
         assertEquals(RequestResult.DUPLICATE, party.playAgain("Ehren", 0));
     }
+
+    /**
+     * Tests that a guest can remove their own waiting song: the rest of
+     * the line keeps its order and the guest gets a slot back.
+     */
+    public void testRemoveRequestNormal() {
+        party.addRequest("Tuan", "Levitating");
+        party.addRequest("Toshi", "Uptown Funk");
+        party.addRequest("Tuan", "Hey Ya");
+        assertEquals(RequestResult.GUEST_LIMIT,
+            party.addRequest("Tuan", "Blinding Lights"));
+
+        assertTrue(party.removeRequest(" tuan ", 0));
+
+        ArrayList<Song> upNext = party.getUpNext();
+        assertEquals(2, upNext.size());
+        assertEquals("Uptown Funk", upNext.get(0).getTitle());
+        assertEquals("Hey Ya", upNext.get(1).getTitle());
+        assertEquals(1, party.countSongsBy("Tuan"));
+        assertEquals(RequestResult.ADDED,
+            party.addRequest("Tuan", "Blinding Lights"));
+    }
+
+    /**
+     * Tests that removal is refused, with the queue unchanged, for a blank
+     * or null name, another guest's song, and a bad or empty-queue index.
+     */
+    public void testRemoveRequestRefused() {
+        assertFalse(party.removeRequest("Tuan", 0));
+
+        party.addRequest("Tuan", "Levitating");
+        party.addRequest("Toshi", "Uptown Funk");
+
+        assertFalse(party.removeRequest("   ", 0));
+        assertFalse(party.removeRequest(null, 0));
+        assertFalse(party.removeRequest("Toshi", 0));
+        assertFalse(party.removeRequest("Tuan", -1));
+        assertFalse(party.removeRequest("Tuan", 2));
+        assertEquals(2, party.getUpNext().size());
+    }
+
+    /**
+     * Tests that the song playing cannot be removed through Up Next.
+     */
+    public void testRemoveRequestWhilePlaying() {
+        party.addRequest("Tuan", "Levitating");
+        party.playNext();
+        assertFalse(party.removeRequest("Tuan", 0));
+        assertEquals("Levitating", party.getNowPlaying().getTitle());
+    }
+
+    /**
+     * Tests that history keeps only the last MAX_HISTORY songs, oldest
+     * dropped first, and that Play Again still uses the visible order.
+     */
+    public void testHistoryCap() {
+        int total = PartyQueue.MAX_HISTORY + 5;
+        for (int i = 0; i < total; i++) {
+            party.addRequest("Guest" + i, "Song" + i);
+            party.playNext();
+        }
+        party.playNext();
+
+        ArrayList<Song> history = party.getHistory();
+        assertEquals(PartyQueue.MAX_HISTORY, history.size());
+        assertEquals("Song5", history.get(0).getTitle());
+        assertEquals("Song" + (total - 1),
+            history.get(PartyQueue.MAX_HISTORY - 1).getTitle());
+
+        assertEquals(RequestResult.ADDED, party.playAgain("Mehad", 0));
+        assertEquals("Song5", party.getUpNext().get(0).getTitle());
+    }
 }

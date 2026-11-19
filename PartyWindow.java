@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -101,15 +102,19 @@ public class PartyWindow extends JFrame {
             ? "Nothing playing" : "Now Playing: " + line);
     }
 
-    /** @param lines the queue in order; empty shows "Queue is empty" */
+    /**
+     * Shows the waiting songs in order; an empty list shows
+     * "Queue is empty". Rows are replaced only when the text changes, so a
+     * guest's pick survives the once-a-second refresh.
+     *
+     * @param lines the queue in order
+     */
     public void showUpNext(List<String> lines) {
-        upNextModel.clear();
-        if (lines.isEmpty()) {
-            upNextModel.addElement("Queue is empty");
+        List<String> rows = new ArrayList<String>(lines);
+        if (rows.isEmpty()) {
+            rows.add("Queue is empty");
         }
-        for (String line : lines) {
-            upNextModel.addElement(line);
-        }
+        replaceRows(upNextModel, upNextList, rows);
     }
 
     /**
@@ -120,20 +125,31 @@ public class PartyWindow extends JFrame {
      * @param lines the played songs in order; may be empty
      */
     public void showHistory(List<String> lines) {
-        boolean same = lines.size() == historyModel.size();
-        for (int i = 0; same && i < lines.size(); i++) {
-            same = lines.get(i).equals(historyModel.get(i));
+        replaceRows(historyModel, historyList, lines);
+    }
+
+    /**
+     * Replaces a list's rows only if the text changed. When the rows do
+     * change, the old pick is cleared, because the same row number may now
+     * point at a different song.
+     *
+     * @param model the list's rows
+     * @param list  the list on screen
+     * @param rows  the text to show
+     */
+    private void replaceRows(DefaultListModel<String> model,
+        JList<String> list, List<String> rows) {
+        boolean same = rows.size() == model.size();
+        for (int i = 0; same && i < rows.size(); i++) {
+            same = rows.get(i).equals(model.get(i));
         }
         if (same) {
             return;
         }
-        int selected = historyList.getSelectedIndex();
-        historyModel.clear();
-        for (String line : lines) {
-            historyModel.addElement(line);
-        }
-        if (selected >= 0 && selected < historyModel.size()) {
-            historyList.setSelectedIndex(selected);
+        list.clearSelection();
+        model.clear();
+        for (String row : rows) {
+            model.addElement(row);
         }
     }
 
