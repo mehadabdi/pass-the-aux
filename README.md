@@ -7,7 +7,7 @@ A party song request app where guests can submit their name and a song title. Re
 
 All project files are in the root directory of this repository (default package). The tests use the CS 2114 `student.TestCase` library (`student.jar`).
 
-### The program
+### The Program
 
 **Eclipse:** import the folder as a Java project, then right-click `PassTheAuxApp.java` → **Run As** → **Java Application**.
 
@@ -20,7 +20,7 @@ java PassTheAuxApp
 
 Using it: type a name and song title and click **Add** (or press Enter). Every 10 seconds the front of **Up Next** moves to **Now Playing**, and the finished song moves to **Played**. To replay one, click it in the **Played** list, type your name, and click **Play Again**. To take back one of your own waiting songs, click it in **Up Next**, type your name, and click **Remove**.
 
-### The tests
+### The Tests
 
 In Eclipse, add `student.jar` to the build path (Build Path → Add External Archives), then right-click the project → **Run As** → **JUnit Test** to run every test class, or right-click a single `...Test.java` file to run just that one.
 
@@ -47,19 +47,19 @@ The model tests create no window and no controller, so they run without the view
 | Controller | `PartyController` | Handles clicks and the 1-second timer, calls the model, updates the view |
 | Controller | `PassTheAuxApp` | `main` only: builds the model, view, and controller and starts the controller |
 
-### How the view stays connected without keeping model state
+### How the View Stays Connected without keeping Model State
 
 Every user action and every timer tick goes through `PartyController`, which calls the model and then calls `refresh()`. `refresh()` reads the model's getters (`getNowPlaying`, `getUpNext`, `getHistory`, `getSecondsUntilNext`) and pushes plain Strings to the view. The view never holds a `Song`, a queue, a count, or a rule; its lists only contain the text it was last told to show, and that text is replaced from the model on every refresh. For Play Again and Remove the view reports only which row is selected (an `int`), and the model decides what that row means and whether the action is allowed.
 
 ## Reflection
 
-### We switched features: Play Next → Play Again
+### We Switched Features: Play Next → Play Again
 
 Our D3 Next Steps named a host **Play Next** button. For D4 we built **Play Again** instead: finished songs appear in a Played list, and a guest can pick one and request it again. Our group originally wanted guests to see the play history, and Play Next was host-only and mostly a wrapper around `enqueueFront`, which already existed and was tested. Play Again adds a new model method (`PartyQueue.playAgain`) that looks a song up in the history by position and runs it through every normal request rule, plus a new user path (the Played list and the Play Again button) through the controller and view.
 
-### How the design absorbed the change
+### How the Design Absorbed the Change
 
-| Class | D3 prediction (for Play Next) | What actually happened (Play Again) |
+| Class | D3 prediction (for Play Next) | What Actually Happened (Play Again) |
 |---|---|---|
 | `PartyQueue` | Change: new `addPriority` | **Changed:** new `playAgain(String name, int historyIndex)` |
 | `PartyController` | Change: new `handlePriority` | **Changed:** new `handlePlayAgain()`, and `refresh()` now also pushes the Played list |
@@ -72,19 +72,19 @@ Our D3 Next Steps named a host **Play Next** button. For D4 we built **Play Agai
 
 Tests changed too: `PartyQueueTest` (Play Again cases) and `LinkedQueueTest` (interleaved order).
 
-**What matched:** exactly the three classes we predicted changed, and none of the six classes we said should stay unchanged had to change, even though we switched features. The same layers own the same jobs for both features: one new model method, one new controller handler, one new view control.
+**What Matched:** exactly the three classes we predicted changed, and none of the six classes we said should stay unchanged had to change, even though we switched features. The same layers own the same jobs for both features: one new model method, one new controller handler, one new view control.
 
-**What surprised us:**
+**What Surprised Us:**
 
 - The model change was much smaller than we expected. `playAgain` is about five lines: it checks the index and then calls `addRequest`, so the blank-name, duplicate, and 2-song-limit rules came for free with no new validation code.
 - The view had a bug we did not predict. The controller refreshes the screen every second, and redrawing the Played list every second wiped out the guest's selection before they could click Play Again. We fixed it inside the view only: the lists redraw only when their text actually changed. When the text does change, the pick is cleared on purpose, because the same row number may now point at a different song.
 - Picking by row number creates a hidden agreement: row 0 in the Played list only means `getHistory().get(0)` because the controller builds the rows in history order. Nothing in the code enforces that besides the controller.
 
-### Did the change cross the model/view line?
+### Did the Change Cross the model/view line?
 
 No. The view learned nothing new about the model. It still receives only Strings and still imports no model class; the only new thing it reports back is a row number (an `int`). The model learned nothing about the screen: `playAgain` takes a name and an index and returns a `RequestResult`. The only ripple across layers is the row-order agreement above, which lives in the controller, where it belongs.
 
-### What changed from the D3 plan
+### What changed from the D3 Plan
 
 - **Feature:** Play Next → Play Again (explained above). `addPriority` and `handlePriority` were not built.
 - **Remove-my-request built early.** Ehren added a Remove button and a selectable Up Next list to `PartyWindow`, so we finished the stretch goal in this deliverable: `PartyQueue.removeRequest`, `PartyController.handleRemove`, and tests. The spec's signature was `RequestResult removeRequest(String name, String title)`; we built `boolean removeRequest(String name, int upNextIndex)` instead. It takes a row number like `playAgain`, so the view never sends song text, and it returns a `boolean` so `RequestResult` did not have to change. A guest may remove only their own song.
