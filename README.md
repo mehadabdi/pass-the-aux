@@ -53,7 +53,7 @@ Every user action and every timer tick goes through `PartyController`, which cal
 
 ## Reflection
 
-### We Switched Features: Play Next → Play Again
+### Switched Features: Play Next → Play Again
 
 Our D3 Next Steps named a host **Play Next** button. For D4 we built **Play Again** instead: finished songs appear in a Played list, and a guest can pick one and request it again. Our group originally wanted guests to see the play history, and Play Next was host-only and mostly a wrapper around `enqueueFront`, which already existed and was tested. Play Again adds a new model method (`PartyQueue.playAgain`) that looks a song up in the history by position and runs it through every normal request rule, plus a new user path (the Played list and the Play Again button) through the controller and view.
 
@@ -87,15 +87,15 @@ No. The view learned nothing new about the model. It still receives only Strings
 ### What changed from the D3 Plan
 
 - **Feature:** Play Next → Play Again (explained above). `addPriority` and `handlePriority` were not built.
-- **Remove-my-request built early.** Ehren added a Remove button and a selectable Up Next list to `PartyWindow`, so we finished the stretch goal in this deliverable: `PartyQueue.removeRequest`, `PartyController.handleRemove`, and tests. The spec's signature was `RequestResult removeRequest(String name, String title)`; we built `boolean removeRequest(String name, int upNextIndex)` instead. It takes a row number like `playAgain`, so the view never sends song text, and it returns a `boolean` so `RequestResult` did not have to change. A guest may remove only their own song.
-- **History capped at 20 songs** (`PartyQueue.MAX_HISTORY`) so the Played list stays short at a long party.
+- **Remove Button Built with Selection.** Ehren added a Remove button and a selectable Up Next list to `PartyWindow`, so we finished the stretch goal in this deliverable: `PartyQueue.removeRequest`, `PartyController.handleRemove`, and tests. The spec's signature was `RequestResult removeRequest(String name, String title)`; we built `boolean removeRequest(String name, int upNextIndex)` instead. It takes a row number like `playAgain`, so the view never sends song text, and it returns a `boolean` so `RequestResult` did not have to change. A guest may remove only their own song.
+- **History Capped at 20 Songs** (`PartyQueue.MAX_HISTORY`) so the Played list stays short at a long party.
 - **`PartyControllerTest` added** for `messageFor` (every result plus null). It calls a static method, so it creates no window.
 - **Signatures added:** `PartyQueue.playAgain(String, int)`, `PartyQueue.removeRequest(String, int)`, `PartyController.handlePlayAgain()`, `PartyController.handleRemove()`, and in `PartyWindow`: `showHistory(List<String>)`, `getSelectedHistoryIndex()`, `addPlayAgainListener(ActionListener)`, `getSelectedUpNextIndex()`, `addRemoveListener(ActionListener)`.
 - **Validation:** no new rules. A bad pick (nothing selected, or a row outside the history) returns `NOT_FOUND`; a blank name, duplicate, or guest over the limit returns the same result `addRequest` gives. The controller shows "Pick a song from the Played list first." and "Type your name first." for those two cases, since "enter a song and name" did not fit when the song is already picked.
 - **Name length limit** (D3 MVP item 2) was **not** done. It needs a new `RequestResult` value and a change to `RequestValidator`, two classes our prediction said would not change, so we moved it to the final build.
 - **Tests added beyond the plan:** interleaved enqueue/dequeue order, dequeue after the queue empties, and too-long / symbols-only titles through `addRequest`.
 
-### Bad input: every case has a test
+### Bad Input: every case has a test
 
 | Bad input | What happens | Test(s) |
 |---|---|---|
