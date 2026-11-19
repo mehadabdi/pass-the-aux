@@ -31,6 +31,8 @@ public class PartyWindow extends JFrame {
     private final JList<String> historyList =
         new JList<String>(historyModel);
     private final JButton playAgainButton = new JButton("Play Again");
+    private final JButton removeButton = new JButton("Remove");
+    private final JList<String> upNextList = new JList<String>(upNextModel);
 
     /**
      * Builds the window. It is not shown until setVisible(true).
@@ -49,9 +51,14 @@ public class PartyWindow extends JFrame {
         status.add(countdownLabel);
         status.add(messageLabel);
 
-        JScrollPane upNextPane =
-            new JScrollPane(new JList<String>(upNextModel));
+        upNextList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane upNextPane = new JScrollPane(upNextList);
         upNextPane.setBorder(BorderFactory.createTitledBorder("Up Next"));
+
+        JPanel upNextPanel = new JPanel(new BorderLayout());
+        upNextPanel.add(upNextPane, BorderLayout.CENTER);
+        upNextPanel.add(removeButton, BorderLayout.SOUTH);
 
         historyList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane historyPane = new JScrollPane(historyList);
@@ -62,7 +69,7 @@ public class PartyWindow extends JFrame {
         historyPanel.add(playAgainButton, BorderLayout.SOUTH);
 
         JPanel lists = new JPanel(new GridLayout(1, 2));
-        lists.add(upNextPane);
+        lists.add(upNextPanel);
         lists.add(historyPanel);
 
         add(input, BorderLayout.NORTH);
@@ -156,5 +163,18 @@ public class PartyWindow extends JFrame {
     /** @param listener called when Play Again is clicked */
     public void addPlayAgainListener(ActionListener listener) {
         playAgainButton.addActionListener(listener);
+    }
+    /**
+    * @return the selected row in the Up Next list, or -1 if none
+    */
+    public int getSelectedUpNextIndex() {
+        return upNextList.getSelectedIndex();
+    }
+
+    /**
+    * @param listener called when Remove is clicked
+    */
+    public void addRemoveListener(ActionListener listener) {
+        removeButton.addActionListener(listener);
     }
 }
