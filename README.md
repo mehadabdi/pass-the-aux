@@ -131,33 +131,33 @@ No. The view learned nothing new about the model. It still receives only Strings
 
 ## Next Steps
 
-### What is left for the final build, in order
+### What is left for the Final Build, in order
 
 1. **Name length limit:** a new `NAME_TOO_LONG` result in `RequestResult`, a check in `RequestValidator`, a message in `PartyController.messageFor`, and tests. We held it until after D4 is graded because it changes the two classes our D3 prediction said would stay unchanged.
 2. **Group Hand Test** of the full demo path on every member's laptop, and fix anything it finds.
-3. **Practice the Demo** below until it fits in 3 minutes.
+3. **Practice the Demo** below until it fits within 3 minutes.
 
-### Stretch goals
+### Stretch Goals
 
 - **Done:** play history (user-facing through Play Again), duplicate detection, and remove-my-request.
 - **Dropping:** host Play Next / `addPriority`. Play Again replaced it as our change feature.
 - **Dropping:** stopping guests from dodging the 2-song limit with a different name; fixing it would need guest accounts, which is far outside our scope.
 
-### The 3-minute demo
+### The 3-Minute Demo
 
-| Time | What we show |
+| Time | What We Show |
 |---|---|
 | 0:00 – 0:15 | Start the app; what Pass the Aux is: guests request songs, first come first served |
 | 0:15 – 0:45 | Tuan adds two songs, Toshi adds one, Tuan tries a third (refused: 2-song limit) |
 | 0:45 – 1:10 | Bad input: blank song, `@@@###`, and a duplicate title each show a message, no crash |
 | 1:10 – 1:30 | Tuan picks his own song in Up Next and clicks Remove; then tries to remove Toshi's (refused) |
-| 1:30 – 2:10 | **New feature:** pick a song in Played, type a name, Play Again; it joins the back of Up Next. Then Play Again with nothing picked (refused) |
+| 1:30 – 2:10 | **New Feature:** pick a song in Played, type a name, Play Again; it joins the back of Up Next. Then Play Again with nothing picked (refused) |
 | 2:10 – 2:45 | Run the JUnit tests in Eclipse: all green, and the model tests open no window |
 | 2:45 – 3:00 | One line on how the change stayed in the three classes we predicted |
 
 A song moves every 10 seconds from the moment the app starts, so by 1:30 at least one song has finished and is in the Played list.
 
-### Who does what
+### Who Does What
 
 | Item | Owner |
 |---|---|
@@ -190,6 +190,6 @@ A song moves every 10 seconds from the moment the app starts, so by 1:30 at leas
 | `PartyWindowTest.java` | Ehren | Wrote and expanded to cover every view method (12 tests) |
 | `README.md` | Mehad, Tuan | Mehad drafted (GenAI-assisted); Tuan revised |
 
-## GenAI note
+## GenAI Note
 
 We used Claude for this deliverable. Mehad gave it our D4 rubric and our D3 Next Steps and asked what would meet every Exceeds box. It pointed out that just showing the history we already stored would count as a "button wired to logic you already have," so we chose Play Again, which adds model logic. It also suggested keeping our changes out of `RequestResult` and `RequestValidator` so our D3 prediction would hold, which is why `removeRequest` returns a `boolean`. Mehad then had it draft `PartyQueue.playAgain`, `removeRequest`, and the history cap, the Played list and Play Again button in `PartyWindow`, `handlePlayAgain` and `handleRemove` in `PartyController`, the new tests in `PartyQueueTest`, `LinkedQueueTest`, and `PartyControllerTest`, and this README. Ehren added the Remove button and the selectable Up Next list to `PartyWindow` and expanded `PartyWindowTest` himself. While checking the running app, Claude found that the once-a-second refresh was wiping out a guest's pick in both lists, and the fix stayed inside the view. We kept the code because it matched our design and every test passed, and we reviewed the new methods so each owner can explain them.
