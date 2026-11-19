@@ -97,7 +97,7 @@ No. The view learned nothing new about the model. It still receives only Strings
 
 ### Bad Input: every case has a test
 
-| Bad input | What happens | Test(s) |
+| Bad Input | What Happens | Test(s) |
 |---|---|---|
 | Blank or spaces-only name or title | Refused, message, nothing added | `RequestValidatorTest.testValidateRequestBlank`, `testSanitizeBlank`; `PartyQueueTest.testAddRequestRefused` |
 | Title over 100 characters | Refused | `RequestValidatorTest.testValidateRequestTooLong`; `PartyQueueTest.testAddRequestBadTitles` |
@@ -116,14 +116,14 @@ No. The view learned nothing new about the model. It still receives only Strings
 | **New:** Play Again on a song that is waiting or playing | `DUPLICATE` | `PartyQueueTest.testPlayAgainRefused`, `testPlayAgainWhilePlaying` |
 | **New:** Play Again by a guest already at 2 songs | `GUEST_LIMIT` | `PartyQueueTest.testPlayAgainRefused` |
 
-### What doesn't work yet
+### What Doesn't Work yet
 
 - Guest names have no length limit; only titles are capped at 100 characters.
 - A guest can dodge the 2-song limit by typing a different name (known MVP limitation).
 - `PartyController`'s click and tick handlers are checked by hand only; `PartyControllerTest` covers just the messages, because the handlers need a real window.
 - If the line changes while a guest has a song picked (a song starts playing), the pick is cleared and they have to click it again.
 
-### What would make the next feature cheaper
+### What would make the next Feature Cheaper
 
 - **A private `checkRules(Song)` in `PartyQueue`.** Play Again was cheap only because it could call `addRequest` with a title. Remove-my-request already had to repeat the name check on its own, and any future feature with a different insert (Play Next, if we return to it) needs the same rules, so pulling the rule checks into one private method would let every entry point share them.
 - **A small `PartyView` interface** that `PartyWindow` implements and `PartyController` talks to. Each new feature would add its methods in one place, and the controller could be tested with a fake view instead of a real Swing window.
@@ -134,8 +134,8 @@ No. The view learned nothing new about the model. It still receives only Strings
 ### What is left for the final build, in order
 
 1. **Name length limit:** a new `NAME_TOO_LONG` result in `RequestResult`, a check in `RequestValidator`, a message in `PartyController.messageFor`, and tests. We held it until after D4 is graded because it changes the two classes our D3 prediction said would stay unchanged.
-2. **Group hand test** of the full demo path on every member's laptop, and fix anything it finds.
-3. **Practice the demo** below until it fits in 3 minutes.
+2. **Group Hand Test** of the full demo path on every member's laptop, and fix anything it finds.
+3. **Practice the Demo** below until it fits in 3 minutes.
 
 ### Stretch goals
 
