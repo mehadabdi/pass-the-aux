@@ -28,6 +28,7 @@ public class PartyController {
         this.view = view;
         this.timer = new Timer(1000, e -> handleTick());
         view.addAddListener(e -> handleAdd());
+        view.addPlayAgainListener(e -> handlePlayAgain());
         started = false;
     }
 
@@ -53,6 +54,28 @@ public class PartyController {
         RequestResult result =
             model.addRequest(view.getNameInput(), view.getTitleInput());
         view.showMessage(messageFor(result));
+        if (result == RequestResult.ADDED) {
+            view.clearInputs();
+        }
+        refresh();
+    }
+
+    /**
+     * Re-requests the song the guest picked in the Played list, under the
+     * name in the name field. Every rule is checked by the model.
+     */
+    public void handlePlayAgain() {
+        RequestResult result = model.playAgain(view.getNameInput(),
+            view.getSelectedHistoryIndex());
+        if (result == RequestResult.NOT_FOUND) {
+            view.showMessage("Pick a song from the Played list first.");
+        }
+        else if (result == RequestResult.BLANK_INPUT) {
+            view.showMessage("Type your name first.");
+        }
+        else {
+            view.showMessage(messageFor(result));
+        }
         if (result == RequestResult.ADDED) {
             view.clearInputs();
         }
@@ -110,6 +133,12 @@ public class PartyController {
             position++;
         }
         view.showUpNext(lines);
+
+        List<String> played = new ArrayList<String>();
+        for (Song song : model.getHistory()) {
+            played.add(song.toString());
+        }
+        view.showHistory(played);
         view.showCountdown(model.getSecondsUntilNext());
     }
 }

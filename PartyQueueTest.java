@@ -201,4 +201,106 @@ public class PartyQueueTest extends TestCase {
         first.clear();
         assertEquals(3, party.getUpNext().size());
     }
+
+    /**
+     * Tests that too-long and symbols-only titles are refused through
+     * addRequest and leave the queue unchanged.
+     */
+    public void testAddRequestBadTitles() {
+        assertEquals(RequestResult.TITLE_TOO_LONG,
+            party.addRequest("Tuan", "a".repeat(101)));
+        assertEquals(RequestResult.NO_LETTERS_OR_DIGITS,
+            party.addRequest("Tuan", "@@@###"));
+        assertEquals(0, party.getUpNext().size());
+    }
+
+    /**
+     * Tests that Play Again re-requests a played song: it joins the back
+     * of Up Next under the new guest's name, and history is unchanged.
+     */
+    public void testPlayAgainNormal() {
+        party.addRequest("Tuan", "Levitating");
+        party.addRequest("Toshi", "Uptown Funk");
+        party.playNext();
+        party.playNext();
+        party.addRequest("Ehren", "Hey Ya");
+
+        assertEquals(RequestResult.ADDED, party.playAgain("Mehad", 0));
+
+        ArrayList<Song> upNext = party.getUpNext();
+        assertEquals(2, upNext.size());
+        assertEquals("Hey Ya", upNext.get(0).getTitle());
+        assertEquals("Levitating", upNext.get(1).getTitle());
+        assertEquals("Mehad", upNext.get(1).getGuestName());
+        assertEquals(1, party.getHistory().size());
+    }
+
+    /**
+     * Tests that a replayed song plays again and goes back into history.
+     */
+    public void testPlayAgainPlaysThrough() {
+        party.addRequest("Tuan", "Levitating");
+        party.playNext();
+        party.playNext();
+        party.playAgain("Mehad", 0);
+
+        assertEquals("Levitating", party.playNext().getTitle());
+        party.playNext();
+        assertEquals(2, party.getHistory().size());
+        assertEquals("Levitating", party.getHistory().get(1).getTitle());
+    }
+
+    /**
+     * Tests that a bad history index returns NOT_FOUND: nothing picked
+     * (-1), past the end, and an empty history.
+     */
+    public void testPlayAgainBadIndex() {
+        assertEquals(RequestResult.NOT_FOUND, party.playAgain("Mehad", 0));
+
+        party.addRequest("Tuan", "Levitating");
+        party.playNext();
+        party.playNext();
+        assertEquals(RequestResult.NOT_FOUND, party.playAgain("Mehad", -1));
+        assertEquals(RequestResult.NOT_FOUND, party.playAgain("Mehad", 1));
+        assertEquals(0, party.getUpNext().size());
+    }
+
+    /**
+     * Tests that Play Again follows the normal rules: blank or null name,
+     * a song already playing or waiting, and the 2-song guest limit.
+     */
+    public void testPlayAgainRefused() {
+        party.addRequest("Tuan", "Levitating");
+        party.addRequest("Toshi", "Uptown Funk");
+        party.playNext();
+        party.playNext();
+        // History: [Levitating]; Now Playing: Uptown Funk
+
+        assertEquals(RequestResult.BLANK_INPUT, party.playAgain("   ", 0));
+        assertEquals(RequestResult.BLANK_INPUT, party.playAgain(null, 0));
+
+        party.playNext();
+        // History: [Levitating, Uptown Funk]; nothing playing
+        assertEquals(RequestResult.ADDED, party.playAgain("Mehad", 0));
+        assertEquals(RequestResult.DUPLICATE, party.playAgain("Ehren", 0));
+
+        party.addRequest("Mehad", "Hey Ya");
+        assertEquals(RequestResult.GUEST_LIMIT,
+            party.playAgain(" MEHAD ", 1));
+        assertEquals(2, party.getUpNext().size());
+    }
+
+    /**
+     * Tests that a song in history cannot be replayed while it is the song
+     * currently playing.
+     */
+    public void testPlayAgainWhilePlaying() {
+        party.addRequest("Tuan", "Levitating");
+        party.playNext();
+        party.playNext();
+        party.playAgain("Mehad", 0);
+        party.playNext();
+        // Levitating is playing again and is also history[0]
+        assertEquals(RequestResult.DUPLICATE, party.playAgain("Ehren", 0));
+    }
 }

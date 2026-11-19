@@ -135,6 +135,24 @@ public class PartyQueue {
     }
 
     /**
+     * Re-requests a song that already played. The song goes through every
+     * normal rule (blank name, duplicate, the per-guest limit) and, if
+     * allowed, joins the back of Up Next under the new guest's name.
+     *
+     * @param name         the guest asking to hear it again
+     * @param historyIndex the song's position in getHistory() (0 = oldest)
+     * @return ADDED, NOT_FOUND if the index is not in the history, or the
+     *         same refusal addRequest would give; queue unchanged on refusal
+     */
+    public RequestResult playAgain(String name, int historyIndex) {
+        if (historyIndex < 0 || historyIndex >= history.size()) {
+            return RequestResult.NOT_FOUND;
+        }
+        String title = history.get(historyIndex).getTitle();
+        return addRequest(name, title);
+    }
+
+    /**
      * Gets a copy of the songs that have already played, oldest first.
      *
      * @return a new list of played songs (empty if none)

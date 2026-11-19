@@ -192,4 +192,57 @@ public class LinkedQueueTest extends TestCase {
         assertFalse(queue.remove(null));
         assertEquals(2, queue.getSize());
     }
+
+    /**
+     * Tests that order stays first-in, first-out when enqueues and
+     * dequeues are mixed, including emptying the queue and refilling it
+     * (which checks that the tail reference resets correctly).
+     */
+    public void testInterleavedOrder() {
+        queue.enqueue("A");
+        queue.enqueue("B");
+        assertEquals("A", queue.dequeue());
+        queue.enqueue("C");
+        assertEquals("B", queue.dequeue());
+        queue.enqueue("D");
+        queue.enqueue("E");
+        assertEquals("C", queue.dequeue());
+        assertEquals("D", queue.peek());
+        assertEquals(2, queue.getSize());
+
+        Object[] array = queue.toArray();
+        assertEquals("D", array[0]);
+        assertEquals("E", array[1]);
+
+        assertEquals("D", queue.dequeue());
+        assertEquals("E", queue.dequeue());
+        assertTrue(queue.isEmpty());
+
+        queue.enqueue("F");
+        queue.enqueue("G");
+        assertEquals("F", queue.dequeue());
+        assertEquals("G", queue.dequeue());
+        assertTrue(queue.isEmpty());
+    }
+
+    /**
+     * Tests that a failed dequeue on an emptied queue leaves it usable.
+     */
+    public void testDequeueAfterEmptying() {
+        queue.enqueue("A");
+        queue.dequeue();
+        Exception exception = null;
+        try {
+            queue.dequeue();
+        }
+        catch (NoSuchElementException e) {
+            exception = e;
+        }
+        assertNotNull(exception);
+        assertEquals(0, queue.getSize());
+
+        queue.enqueue("B");
+        assertEquals("B", queue.peek());
+        assertEquals(1, queue.getSize());
+    }
 }
